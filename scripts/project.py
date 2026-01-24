@@ -19,6 +19,8 @@ def create_project(name, description):
     headers = {"Authorization": f"Bearer {token}"}
     payload = {"name": name, "description": description}
     response = requests.post(f"{API_BASE_URL}/projects/", headers=headers, json=payload)
+    if not response.ok:
+        print(f"Error: {response.text}")
     response.raise_for_status()
     print(json.dumps(response.json(), indent=2))
 

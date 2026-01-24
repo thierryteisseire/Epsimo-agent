@@ -23,7 +23,8 @@ def create_assistant(project_id, name, instructions, model, tools=None):
         "model": model,
         "type": "agent",
         "configurable": {
-             "type": "agent"
+             "type": "agent",
+             "agent_type": "agent"
         },
         "tools": tools if tools is not None else ["tavily"]
     }

@@ -56,7 +56,11 @@ def run_verification():
             "name": "Test Agent", 
             "config": {
                 "instructions": "You are a test agent.",
-                "model": "gpt-4o"
+                "model": "gpt-4o",
+                "configurable": {
+                    "type": "agent",
+                    "agent_type": "agent"
+                }
             },
             "public": False
         }
@@ -67,8 +71,20 @@ def run_verification():
 
         # 5. Create Thread
         print("\n🧵 Creating Test Thread...")
-        thread_payload = {"name": "Test Thread"}
+        thread_payload = {
+            "name": "Test Thread",
+            "assistant_id": assistant['assistant_id'],
+            "metadata": {
+                "configurable": {},
+                "type": "thread"
+            },
+            "configurable": {
+                 "type": "agent"
+            }
+        }
         resp = requests.post(f"{API_BASE_URL}/threads/", headers=proj_headers, json=thread_payload)
+        if not resp.ok:
+            print(f"Error: {resp.text}")
         resp.raise_for_status()
         thread = resp.json()
         print(f"✅ Created thread: {thread['name']} ({thread['thread_id']})")
