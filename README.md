@@ -13,6 +13,7 @@ This skill allows you to interact with the EpsimoAI platform. You can manage pro
 
 **Base URL:** `https://api.epsimoagents.com`
 **Frontend URL:** `https://app.epsimoagents.com`
+Example of default UI: 'https://stream.epsimoagents.com'
 
 ## Prerequisites
 
