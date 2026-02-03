@@ -4,17 +4,13 @@ import sys
 import argparse
 import requests
 import json
-from auth import get_token, API_BASE_URL
+from auth import get_token, get_project_token, API_BASE_URL
 
 def create_thread(project_id, name, assistant_id=None):
     token = get_token()
     
     # Get project specific token
-    auth_headers = {"Authorization": f"Bearer {token}"}
-    proj_resp = requests.get(f"{API_BASE_URL}/projects/{project_id}", headers=auth_headers)
-    proj_resp.raise_for_status()
-    data = proj_resp.json()
-    project_token = data.get('access_token') or data.get('token') or data.get('jwt_token')
+    project_token = get_project_token(project_id)
 
     headers = {"Authorization": f"Bearer {project_token}"}
     

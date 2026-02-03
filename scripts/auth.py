@@ -11,7 +11,7 @@ from pathlib import Path
 
 # Configuration
 API_BASE_URL = os.environ.get("EPSIMO_API_URL", "https://api.epsimoagents.com")
-TOKEN_FILE = Path.home() / ".epsimo_token"
+TOKEN_FILE = Path("/Users/thierry/code/epsimo-frontend/.epsimo_token")
 
 def get_token():
     """Retrieve a valid JWT token, refreshing if necessary."""
@@ -30,6 +30,18 @@ def get_token():
         return perform_login(os.environ.get("EPSIMO_EMAIL"), os.environ.get("EPSIMO_PASSWORD"))
 
     raise RuntimeError("Authentication required. Please run `python3 .agent/skills/epsimo-agent/scripts/auth.py login` or set EPSIMO_EMAIL and EPSIMO_PASSWORD environment variables.")
+
+def get_project_token(project_id):
+    """Get a project-specific token."""
+    token = get_token()
+    headers = {"Authorization": f"Bearer {token}"}
+    response = requests.get(f"{API_BASE_URL}/projects/{project_id}", headers=headers)
+    response.raise_for_status()
+    data = response.json()
+    project_token = data.get('access_token') or data.get('token') or data.get('jwt_token')
+    if not project_token:
+        raise ValueError(f"Failed to obtain project token for project {project_id}")
+    return project_token
 
 def perform_signup(email, password):
     """Register a new user."""

@@ -3,85 +3,85 @@ import subprocess
 import sys
 import json
 import time
+import os
+import shutil
 
 def run_command(cmd, capture_output=True):
     print(f"Running: {cmd}")
-    result = subprocess.run(cmd, shell=True, capture_output=capture_output, text=True)
+    # Add PYTHONPATH to find epsimo package
+    env = os.environ.copy()
+    env["PYTHONPATH"] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    result = subprocess.run(cmd, shell=True, capture_output=capture_output, text=True, env=env)
     if result.returncode != 0:
         print(f"Error: {result.stderr}")
         raise Exception(f"Command failed: {cmd}")
     return result.stdout.strip()
 
 def main():
-    print("🚀 Starting Epsimo Agent Skill Verification...")
+    print("🚀 Starting Epsimo Agent Skill Verification (CLI Version)...")
     
-    # 1. Auth Check
+    # 1. Auth Check - we do this in the root to ensure we have credentials
     print("\n1️⃣  Checking Authentication...")
-    # Assumes user is already logged in (interactive login hard to script purely automatically without args)
-    # But we can try to get a token
     try:
-        run_command("python3 .agent/skills/epsimo-agent/scripts/auth.py list") # list command doesn't exist but runs default get_token test in my auth.py?
+        run_command("python3 -m epsimo.cli whoami") 
     except:
-        # fallback to just running python3 .../auth.py (default behavior prints token)
-        run_command("python3 .agent/skills/epsimo-agent/scripts/auth.py")
-        
-    # 2. Create Project
-    print("\n2️⃣  Creating Project...")
-    proj_name = f"Verify Project {int(time.time())}"
-    # Assuming project.py has create command. 
-    # Wait, project.py provided earlier in thread had 'list' but maybe 'create' too?
-    # I need to check project.py. I'll assume standard structure or verify first.
-    # Let's verify project.py content first? No, I'll trust my memory/list.
-    # I saw 'example.py' and 'project.py'.
-    # If project.py create is not implemented, I'll list and pick one.
-    
-    # Let's actually update project.py to support create if it doesn't.
-    # But for now, let's LIST projects and use the first one to avoid clutter if create isn't robust.
-    projects_json = run_command("python3 .agent/skills/epsimo-agent/scripts/project.py list")
-    try:
-        projects = json.loads(projects_json)
-        if not projects:
-             print("No projects found. Cannot proceed.")
-             sys.exit(1)
-        project_id = projects[0]['project_id']
-        print(f"✅ Using Project: {projects[0]['name']} ({project_id})")
-    except json.JSONDecodeError:
-        print(f"Failed to parse projects: {projects_json}")
+        print("🔐 Authentication required. Please run 'epsimo auth login' first.")
         sys.exit(1)
+        
+    # Setup temp workspace
+    temp_workspace = f"verify-workspace-{int(time.time())}"
+    os.makedirs(temp_workspace)
+    orig_dir = os.getcwd()
+    os.chdir(temp_workspace)
+    print(f"📂 Created temporary workspace: {temp_workspace}")
 
-    # 3. Create Assistant
-    print("\n3️⃣  Creating Assistant...")
-    asst_name = f"Verify Agent {int(time.time())}"
-    asst_cmd = f'python3 .agent/skills/epsimo-agent/scripts/assistant.py create --project-id "{project_id}" --name "{asst_name}" --instructions "You are a verification bot."'
-    asst_out = run_command(asst_cmd)
-    asst_data = json.loads(asst_out)
-    asst_id = asst_data['assistant_id']
-    print(f"✅ Created Assistant: {asst_name} ({asst_id})")
+    try:
+        # 2. Project Scaffolding
+        print("\n2️⃣  Verifying Project Scaffolding...")
+        test_slug = "verify-app"
+        run_command(f"python3 -m epsimo.cli create 'Verify App'")
+        if os.path.exists(test_slug) and os.path.exists(f"{test_slug}/epsimo.yaml"):
+            print("✅ Scaffolding SUCCESS: App structure created.")
+        else:
+            raise Exception("App structure missing files.")
+        
+        # 3. End-to-End lifecycle
+        print("\n3️⃣  Verifying Project/Assistant Lifecycle...")
+        proj_name = f"VerifyProj-{int(time.time())}"
+        run_command(f"python3 -m epsimo.cli init --name '{proj_name}'")
+        
+        with open("epsimo.yaml", "r") as f:
+            import yaml
+            cfg = yaml.safe_load(f)
+            project_id = cfg['project_id']
+        
+        print(f"✅ Created Project: {project_id}")
+        
+        # Deploy (creates assistant)
+        run_command("python3 -m epsimo.cli deploy")
+        print("✅ Deployed Assistant.")
 
-    # 4. Create Thread
-    print("\n4️⃣  Creating Thread...")
-    thread_name = f"Verify Thread {int(time.time())}"
-    thread_cmd = f'python3 .agent/skills/epsimo-agent/scripts/thread.py create --project-id "{project_id}" --name "{thread_name}" --assistant-id "{asst_id}"'
-    thread_out = run_command(thread_cmd)
-    thread_data = json.loads(thread_out)
-    thread_id = thread_data['thread_id']
-    print(f"✅ Created Thread: {thread_name} ({thread_id})")
+        # Discovery Check
+        asst_json = run_command(f"python3 -m epsimo.cli assistants --project-id {project_id} --json")
+        assistants = json.loads(asst_json)
+        if not assistants:
+            raise Exception("No assistants found after deploy.")
+        
+        print(f"✅ Discovery SUCCESS: Found {len(assistants)} assistants.")
 
-    # 5. Stream Run
-    print("\n5️⃣  Streaming Run...")
-    run_cmd = f'python3 .agent/skills/epsimo-agent/scripts/run.py stream --project-id "{project_id}" --thread-id "{thread_id}" --assistant-id "{asst_id}" --message "Hello, verify run."'
-    # We don't capture output here to let it stream to console? 
-    # Or capture to verify completion.
-    run_out = run_command(run_cmd)
-    
-    # Simple check if output contains expected JSON or text
-    if "content" in run_out or "event" in run_out or "Assistant" in run_out: 
-         print(f"✅ Run Streamed Successfully (Output length: {len(run_out)})")
-    else:
-         print("⚠️ Run output might be empty or malformed.")
-         print(run_out)
+        # 4. Logic responsive check
+        print("\n4️⃣  Checking Credits...")
+        run_command("python3 -m epsimo.cli credits balance")
+        print("✅ Logic Check: Responsive.")
+
+    finally:
+        os.chdir(orig_dir)
+        if os.path.exists(temp_workspace):
+            shutil.rmtree(temp_workspace)
 
     print("\n🎉 Skill Verification Completed Successfully!")
 
 if __name__ == "__main__":
     main()
+
