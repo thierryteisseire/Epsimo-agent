@@ -1,0 +1,27 @@
+{
+    "name": "epsimo-agent",
+    "version": "0.1.0",
+    "description": "Interact with the EpsimoAI platform to manage agents, projects, and threads, and design frontends.",
+    "main": "SKILL.md",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/thierryteisseire/epsimo-agent.git"
+    },
+    "keywords": [
+        "agent-skill",
+        "epsimo",
+        "ai-agent"
+    ],
+    "author": "Thierry Teisseire",
+    "license": "MIT",
+    "files": [
+        "SKILL.md",
+        "README.md",
+        "LICENSE",
+        "verify_skill.py",
+        "assets/",
+        "references/",
+        "scripts/",
+        "templates/"
+    ]
+}
