@@ -1,3 +1,8 @@
+---
+name: epsimo-agent
+description: Interact with the EpsimoAI platform to manage agents, projects, and threads, and design frontends.
+---
+
 # Epsimo Agent Framework (Beta)
 
 > [!NOTE]
