@@ -5,3 +5,14 @@ __pycache__/
 venv/
 .idea/
 .vscode/
+
+# macOS metadata files
+._*
+
+# Token files
+.epsimo_token
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

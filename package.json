@@ -1,8 +1,16 @@
 {
     "name": "epsimo-agent",
-    "version": "0.1.0",
-    "description": "Interact with the EpsimoAI platform to manage agents, projects, and threads, and design frontends.",
+    "version": "0.2.0",
+    "description": "Comprehensive Epsimo AI platform SDK and CLI for managing agents, projects, threads, Virtual Database, and frontend design. Build AI apps with persistent state, streaming conversations, and React UI kit.",
     "main": "SKILL.md",
+    "bin": {
+        "epsimo": "./epsimo/cli.py"
+    },
+    "scripts": {
+        "verify": "python3 verify_skill.py",
+        "test": "python3 scripts/test_all_skills.py",
+        "auth": "python3 epsimo/auth.py"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/thierryteisseire/epsimo-agent.git"
@@ -10,7 +18,18 @@
     "keywords": [
         "agent-skill",
         "epsimo",
-        "ai-agent"
+        "ai-agent",
+        "ai-framework",
+        "virtual-database",
+        "threads",
+        "assistants",
+        "conversation-ai",
+        "persistent-state",
+        "react-ui",
+        "chatbot",
+        "agent-sdk",
+        "llm-framework",
+        "multi-agent"
     ],
     "author": "Thierry Teisseire",
     "license": "MIT",
@@ -19,9 +38,12 @@
         "README.md",
         "LICENSE",
         "verify_skill.py",
+        "test_sdk.py",
         "assets/",
         "references/",
         "scripts/",
-        "templates/"
+        "epsimo/",
+        "docs/",
+        "requirements.txt"
     ]
 }

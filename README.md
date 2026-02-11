@@ -1,168 +1,409 @@
+# Epsimo Agent Framework
+
+> **Beta Release** — Build sophisticated AI-powered applications with agents, persistent threads, and Virtual Database state management.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)](https://github.com/thierryteisseire/epsimo-agent)
+
+The Epsimo Agent Framework provides a unified **CLI**, **Python SDK**, and **React UI Kit** for building AI applications with:
+- 🤖 Multi-agent orchestration
+- 💾 Virtual Database (thread-based persistent state)
+- 💬 Streaming conversations with tool support
+- 🎨 Pre-built React components
+- 🔌 Extensible tool library
+
+**Base URL:** `https://api.epsimoagents.com`  
+**Frontend:** `https://app.epsimoagents.com`
+
 ---
-name: epsimo-agent
-description: Interact with the EpsimoAI platform to manage agents, projects, and threads, and design frontends.
+
+## 📦 Installation
+
+### Python SDK & CLI
+
+```bash
+# Install from PyPI (coming soon)
+pip install epsimo-agent
+
+# Or install from source
+git clone https://github.com/thierryteisseire/epsimo-agent.git
+cd epsimo-agent
+pip install -r requirements.txt
+
+# Make CLI executable
+chmod +x epsimo/cli.py
+export PATH="$PATH:$(pwd)/epsimo"
+```
+
+### npm Package (for Claude Code skills)
+
+```bash
+npm install -g epsimo-agent
+```
+
 ---
 
-# EpsimoAI Agent Skill (Beta)
+## 🚀 Quick Start
 
-> [!NOTE]
-> This is a **Beta** version of the EpsimoAI Agent Skill. Features and APIs may be subject to change.
-
-
-This skill allows you to interact with the EpsimoAI platform. You can manage projects, assistants, threads, and run streams. You can also design frontend applications that integrate with the platform.
-
-**Base URL:** `https://api.epsimoagents.com`
-**Frontend URL:** `https://app.epsimoagents.com`
-Example of default UI: 'https://stream.epsimoagents.com'
-
-## Prerequisites
-
-### Authentication
-
-This skill requires authentication with the EpsimoAI platform.
-
-You can set up authentication by running the login script interactively:
+### 1. Authentication
 
 ```bash
-python3 .agent/skills/epsimo-agent/scripts/auth.py login
+# Login to Epsimo
+epsimo auth login
+
+# Check who you're logged in as
+epsimo whoami
+
+# Check thread/credit balance
+epsimo credits balance
 ```
 
-This will prompt you for your email and password securely, then save the session token.
-
-Alternatively, you can set the following environment variables:
-
-- `EPSIMO_EMAIL`: Your EpsimoAI account email.
-- `EPSIMO_PASSWORD`: Your EpsimoAI account password.
-- `EPSIMO_API_URL`: Optional (defaults to `https://api.epsimoagents.com`).
-
-If the session token expires or is missing, you will be prompted to log in again.
-
-**User Creation:**
-If you try to log in with an email that does not exist, the script can support valid flow if configured, but typically you should use an existing verified account.
-
-## Capabilities
-
-### 1. Manage Projects
-- Create new projects.
-- List existing projects.
-- Get project details.
-
-### 2. Manage Assistants
-- Create new AI assistants. Application logic ensures required configuration (`configurable: { type: "agent" }`) is automatically applied.
-- Configure assistant tools and instructions.
-- List assistants.
-
-### 3. Manage Threads
-- Create new conversation threads.
-- List threads.
-
-### 4. Run & Stream
-- Execute runs on a thread.
-- Stream responses from the assistant using server-sent events (SSE).
-
-### 5. Design Frontend
-- Generate React/Next.js code for a frontend application that connects to your EpsimoAI agent.
-
-## Usage
-
-### Scripts
-
-The skill provides several Python scripts in the `scripts/` directory to handle API interactions.
-
-#### Setup & Auth
-Authentication is handled automatically by the scripts. If no valid token is found, you will be prompted to log in.
-
-To manually log in:
-```bash
-python3 .agent/skills/epsimo-agent/scripts/auth.py login
-```
-
-#### List Projects
-```bash
-python3 .agent/skills/epsimo-agent/scripts/project.py list
-```
-
-#### Create an Assistant
-```bash
-python3 .agent/skills/epsimo-agent/scripts/assistant.py create --project-id <PROJECT_ID> --name "My Assistant" --instructions "You are a helpful assistant." --model "gpt-4o"
-```
-
-#### Create a Thread
-```bash
-python3 .agent/skills/epsimo-agent/scripts/thread.py create --project-id <PROJECT_ID> --name "New Chat" --assistant-id <ASSISTANT_ID>
-```
-
-#### Stream a Run
-```bash
-python3 .agent/skills/epsimo-agent/scripts/run.py stream --project-id <PROJECT_ID> --thread-id <THREAD_ID> --assistant-id <ASSISTANT_ID> --message "Hello, world!"
-```
-
-### Verification
-You can run the full verification suite to ensure all components are working:
-```bash
-python3 .agent/skills/epsimo-agent/scripts/verify_skill.py
-```
-
-### Frontend Design
-
-When designing a frontend, ensure your API calls match the structure used by the platform:
-
-1.  **Project Context**: You may need to fetch a project-specific token via `GET /projects/{id}`.
-2.  **Thread Creation**: When creating a thread, include the `assistant_id` and required metadata:
-    ```javascript
-    await api.post('/threads/', {
-      body: {
-        name: "Thread Name",
-        assistant_id: assistantId,
-        metadata: { configurable: {}, type: "thread" },
-        configurable: { type: "agent" }
-      }
-    });
-    ```
-3.  **Streaming**: Use the `/runs/stream` endpoint with `stream_mode: ["messages", "events", "values"]`.
-
-## Component Templates
-
-The skill includes ready-to-use React components in `templates/components`. These are designed to jumpstart your frontend implementation.
-
-### Available Components
-
-1.  **ThreadChat**: A full-featured chat interface that handles streaming, tool rendering, and markdown.
-    -   Location: `templates/components/ThreadChat`
-    -   Features: Streaming support, tool call visualization, file upload, markdown rendering.
-2.  **AuthModal**: A modal component for Login and Signup flows.
-    -   Location: `templates/components/AuthModal`
-    -   Features: Tabbed interface, form validation, error handling.
-3.  **BuyCredits**: Components for displaying credit balance and purchasing more.
-    -   Location: `templates/components/BuyCredits`
-    -   Features: Progress bar display, pricing cards modal, Stripe checkout integration.
-
-### How to Use
-
-You can copy these components into your project's component directory:
+### 2. Create Your First Project
 
 ```bash
-# Copy ThreadChat
-cp -r .agent/skills/epsimo-agent/templates/components/ThreadChat src/components/
+# Create a new Next.js project with Epsimo
+epsimo create "My AI App"
 
-# Copy AuthModal
-cp -r .agent/skills/epsimo-agent/templates/components/AuthModal src/components/
-
-# Copy BuyCredits
-cp -r .agent/skills/epsimo-agent/templates/components/BuyCredits src/components/
+# Or initialize in existing directory
+cd my-existing-project
+epsimo init
 ```
 
-Ensure you have the required dependencies installed (e.g., `react-markdown`, `react-syntax-highlighter`, `remark-gfm`).
-
-### Managing Credits via Script
-
-You can also check your balance and buy credits using the python script:
+### 3. Deploy Configuration
 
 ```bash
-# Check balance
-python3 .agent/skills/epsimo-agent/scripts/credits.py balance
-
-# Buy 100 credits (creates checkout URL)
-python3 .agent/skills/epsimo-agent/scripts/credits.py buy --quantity 100
+# Sync your epsimo.yaml to the platform
+epsimo deploy
 ```
 
+---
+
+## 🛠️ CLI Reference
+
+### Authentication Commands
+```bash
+epsimo auth login              # Interactive login
+epsimo whoami                  # Display current user info
+```
+
+### Project Management
+```bash
+epsimo projects                # List all projects
+epsimo create <name>           # Scaffold a new Next.js app
+epsimo init                    # Initialize existing directory
+epsimo deploy                  # Deploy epsimo.yaml configuration
+```
+
+### Virtual Database
+```bash
+epsimo db query --project-id <P_ID> --thread-id <T_ID>
+epsimo db set --project-id <P_ID> --thread-id <T_ID> --key <K> --value <V>
+epsimo db get --project-id <P_ID> --thread-id <T_ID> --key <K>
+```
+
+### Credits & Billing
+```bash
+epsimo credits balance                  # Check thread balance
+epsimo credits buy --quantity <N>       # Generate Stripe checkout URL
+```
+
+### Resource Listing
+```bash
+epsimo assistants --project-id <P_ID>  # List assistants
+epsimo threads --project-id <P_ID>     # List threads
+```
+
+---
+
+## 📚 Python SDK
+
+### Installation
+
+```python
+from epsimo import EpsimoClient
+
+# Initialize with API key (JWT token)
+client = EpsimoClient(api_key="your-token-here")
+
+# Or use environment variable
+# export EPSIMO_API_KEY=your-token-here
+client = EpsimoClient()
+```
+
+### Virtual Database Access
+
+```python
+# Get all structured data from a thread
+db_state = client.db.get_all(project_id, thread_id)
+
+# Get specific key
+user_prefs = client.db.get(project_id, thread_id, "user_preferences")
+print(f"Theme: {user_prefs.get('theme')}")
+
+# Set value (for seeding/testing)
+client.db.set(project_id, thread_id, "status", "active")
+```
+
+### Streaming Conversations
+
+```python
+# Stream assistant responses
+for chunk in client.threads.run_stream(
+    project_id, 
+    thread_id, 
+    assistant_id, 
+    "Hello, how can you help me?"
+):
+    print(chunk, end="", flush=True)
+```
+
+### Managing Resources
+
+```python
+# Projects
+projects = client.projects.list()
+project = client.projects.create(name="My Project", description="...")
+project_details = client.projects.get(project_id)
+
+# Assistants
+assistants = client.assistants.list(project_id)
+assistant = client.assistants.create(project_id, config={...})
+
+# Threads
+threads = client.threads.list(project_id)
+thread = client.threads.create(project_id, assistant_id=assistant_id)
+
+# Files
+files = client.files.list(project_id)
+file = client.files.upload(project_id, file_path="document.pdf")
+
+# Credits
+balance = client.credits.get_balance()
+checkout_url = client.credits.create_checkout_session(quantity=1000, amount=100.0)
+```
+
+---
+
+## 🎨 React UI Kit
+
+### ThreadChat Component
+
+```tsx
+import { ThreadChat } from "@/components/epsimo";
+
+export default function App() {
+  return (
+    <ThreadChat 
+      assistantId="your-assistant-id"
+      projectId="your-project-id"
+      placeholder="Ask me anything..."
+    />
+  );
+}
+```
+
+### useChat Hook (Headless)
+
+```tsx
+import { useChat } from "@/hooks/epsimo";
+
+export default function CustomChat() {
+  const { messages, sendMessage, isLoading } = useChat({
+    projectId: "...",
+    threadId: "...",
+    assistantId: "..."
+  });
+
+  return (
+    <div>
+      {messages.map(msg => (
+        <div key={msg.id}>{msg.content}</div>
+      ))}
+      <button onClick={() => sendMessage("Hello")} disabled={isLoading}>
+        Send
+      </button>
+    </div>
+  );
+}
+```
+
+---
+
+## 🧪 Tool Library
+
+The framework includes reusable tool schemas in `epsimo/tools/library.yaml`:
+
+### Available Tools
+
+| Tool | Type | Description |
+|------|------|-------------|
+| **database_sync** | function | Persist structured JSON to thread state (Virtual DB) |
+| **web_search_tavily** | search_tavily | Advanced web search with source attribution |
+| **web_search_ddg** | ddg_search | Fast DuckDuckGo search for simple queries |
+| **retrieval_optimized** | retrieval | High-accuracy document search in uploaded files |
+| **task_management** | function | Track and update user tasks |
+
+### Using Tools in Assistants
+
+```yaml
+# epsimo.yaml
+assistants:
+  - name: "Research Assistant"
+    model: "gpt-4o"
+    instructions: "You help with research tasks"
+    tools:
+      - type: search_tavily
+        max_results: 5
+      - type: function
+        name: update_database
+        description: "Save research findings"
+        parameters:
+          type: object
+          properties:
+            key: { type: string }
+            value: { type: object }
+```
+
+---
+
+## 💾 Virtual Database Pattern
+
+Threads serve as persistent, structured storage — eliminating the need for a separate database.
+
+### How It Works
+
+1. **Agent writes to DB** using the `update_database` tool
+2. **Data persists** in thread state
+3. **Query from SDK or CLI**:
+
+```python
+# Python SDK
+preferences = client.db.get(project_id, thread_id, "user_preferences")
+
+# CLI
+epsimo db query --project-id P123 --thread-id T456
+```
+
+### Benefits
+
+- ✅ Zero database configuration
+- ✅ Data naturally partitioned by conversation
+- ✅ Agent always "knows" what's in its DB
+- ✅ Queryable from both agent and application code
+
+See [docs/virtual_db_guide.md](docs/virtual_db_guide.md) for detailed guide.
+
+---
+
+## 🔐 Authentication & Security
+
+### Environment Variables
+
+```bash
+# .env file (never commit!)
+EPSIMO_API_KEY=your-jwt-token-here
+EPSIMO_EMAIL=your@email.com
+EPSIMO_PASSWORD=your-password  # Only for automated scripts
+```
+
+### Token Management
+
+```python
+from epsimo.auth import get_token, perform_login
+
+# Login programmatically
+token = perform_login("your@email.com", "password")
+
+# Get cached token (auto-refreshes if expired)
+token = get_token()
+```
+
+**Token Storage:** Tokens are stored in `~/code/epsimo-frontend/.epsimo_token` (configurable via `TOKEN_FILE` in auth.py)
+
+**Security Best Practices:**
+- Never commit `.epsimo_token` or `.env` files
+- Use environment variables in production
+- Rotate tokens regularly
+- Use project-specific tokens for multi-tenant apps
+
+---
+
+## 📖 API Reference
+
+See [references/api_reference.md](references/api_reference.md) for comprehensive endpoint documentation including:
+- Authentication flows
+- Request/response schemas
+- HTTP status codes
+- Error handling patterns
+- Rate limits
+
+---
+
+## 🧪 Verification & Testing
+
+```bash
+# Verify skill is correctly configured
+python3 verify_skill.py
+
+# Run E2E test suite
+python3 scripts/test_all_skills.py
+
+# Test streaming functionality
+python3 scripts/test_streaming.py
+
+# Test Virtual DB
+python3 scripts/test_vdb.py
+```
+
+---
+
+## 📁 Project Structure
+
+```
+epsimo-agent/
+├── epsimo/
+│   ├── cli.py              # Unified CLI
+│   ├── client.py           # Main SDK client
+│   ├── auth.py             # Authentication logic
+│   ├── resources/          # Resource-specific clients
+│   │   ├── projects.py
+│   │   ├── assistants.py
+│   │   ├── threads.py
+│   │   ├── files.py
+│   │   ├── credits.py
+│   │   └── db.py
+│   ├── tools/
+│   │   └── library.yaml    # Reusable tool schemas
+│   └── templates/          # Project scaffolding templates
+├── scripts/                # Helper scripts and examples
+├── docs/                   # Additional documentation
+├── references/             # API reference docs
+├── SKILL.md                # Main skill documentation
+└── README.md               # This file
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please open an issue or pull request on [GitHub](https://github.com/thierryteisseire/epsimo-agent).
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+## 🔗 Links
+
+- **Documentation:** [SKILL.md](SKILL.md)
+- **API Reference:** [references/api_reference.md](references/api_reference.md)
+- **Virtual DB Guide:** [docs/virtual_db_guide.md](docs/virtual_db_guide.md)
+- **GitHub:** https://github.com/thierryteisseire/epsimo-agent
+- **Web App:** https://app.epsimoagents.com
+
+---
+
+**Questions?** Open an issue on GitHub or check the [API Reference](references/api_reference.md).
