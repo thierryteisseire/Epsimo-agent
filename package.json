@@ -1,6 +1,6 @@
 {
     "name": "epsimo-agent",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "AI Agent Skill - Build production-ready AI applications with multi-agent orchestration, Virtual Database, streaming conversations, and React UI Kit. For Claude Code, Cursor, Windsurf, and 30+ AI coding agents.",
     "main": "SKILL.md",
     "bin": {
