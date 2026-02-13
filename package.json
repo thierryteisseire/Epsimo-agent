@@ -33,6 +33,13 @@
     ],
     "author": "Thierry Teisseire",
     "license": "MIT",
+    "skills": [
+        {
+            "name": "epsimo-agent",
+            "path": "skills/epsimo-agent/SKILL.md",
+            "description": "Build production-ready AI applications with multi-agent orchestration, persistent state, and React UI Kit"
+        }
+    ],
     "files": [
         "SKILL.md",
         "README.md",
@@ -44,6 +51,7 @@
         "scripts/",
         "epsimo/",
         "docs/",
-        "requirements.txt"
+        "requirements.txt",
+        "skills/"
     ]
 }
