@@ -1,6 +1,6 @@
 ---
 name: epsimo-agent
-description: Comprehensive Epsimo AI platform SDK and CLI for managing agents, projects, threads, Virtual Database, and frontend design. Build AI apps with persistent state, streaming conversations, and React UI kit. Use for: multi-agent orchestration, conversation persistence, structured state management, chatbot UIs, AI application scaffolding.
+description: Comprehensive Epsimo AI platform SDK and CLI for managing agents, projects, threads, Virtual Database, and frontend design. Build AI apps with persistent state, streaming conversations, and React UI kit.
 ---
 
 # Epsimo Agent Framework
