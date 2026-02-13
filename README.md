@@ -4,6 +4,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)](https://github.com/thierryteisseire/epsimo-agent)
+[![Skills](https://img.shields.io/badge/skills.sh-epsimo--agent-purple.svg)](https://skills.sh)
+[![npm](https://img.shields.io/badge/npm-epsimo--agent-red.svg)](https://www.npmjs.com/package/epsimo-agent)
 
 The Epsimo Agent Framework provides a unified **CLI**, **Python SDK**, and **React UI Kit** for building AI applications with:
 - 🤖 Multi-agent orchestration
@@ -19,6 +21,27 @@ The Epsimo Agent Framework provides a unified **CLI**, **Python SDK**, and **Rea
 
 ## 📦 Installation
 
+### For AI Coding Agents (Recommended)
+
+Install as a skill for Claude Code, Cursor, Cline, Windsurf, and 30+ other AI coding agents:
+
+```bash
+npx skills add thierryteisseire/epsimo-agent
+```
+
+This installs the skill across all your AI agents in one command! The skill helps agents:
+- Set up Epsimo projects quickly
+- Manage agents and threads
+- Query the Virtual Database
+- Deploy configurations
+- Handle authentication flows
+
+### npm Package (Global Installation)
+
+```bash
+npm install -g epsimo-agent
+```
+
 ### Python SDK & CLI
 
 ```bash
@@ -33,12 +56,6 @@ pip install -r requirements.txt
 # Make CLI executable
 chmod +x epsimo/cli.py
 export PATH="$PATH:$(pwd)/epsimo"
-```
-
-### npm Package (for Claude Code skills)
-
-```bash
-npm install -g epsimo-agent
 ```
 
 ---
@@ -398,12 +415,21 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## 🔗 Links
 
-- **Documentation:** [SKILL.md](SKILL.md)
+### Installation & Discovery
+- **skills.sh:** Search for "epsimo-agent" at https://skills.sh
+- **npm Package:** https://www.npmjs.com/package/epsimo-agent
+- **Install Command:** `npx skills add thierryteisseire/epsimo-agent`
+
+### Documentation
+- **Skill Guide:** [SKILL.md](SKILL.md)
 - **API Reference:** [references/api_reference.md](references/api_reference.md)
 - **Virtual DB Guide:** [docs/virtual_db_guide.md](docs/virtual_db_guide.md)
-- **GitHub:** https://github.com/thierryteisseire/epsimo-agent
-- **Web App:** https://app.epsimoagents.com
+
+### Platform
+- **GitHub Repository:** https://github.com/thierryteisseire/epsimo-agent
+- **Epsimo Web App:** https://app.epsimoagents.com
+- **API Endpoint:** https://api.epsimoagents.com
 
 ---
 
-**Questions?** Open an issue on GitHub or check the [API Reference](references/api_reference.md).
+**Questions?** Open an issue on [GitHub](https://github.com/thierryteisseire/epsimo-agent/issues) or check the [API Reference](references/api_reference.md).

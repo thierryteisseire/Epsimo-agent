@@ -1,7 +1,7 @@
 {
     "name": "epsimo-agent",
     "version": "0.2.0",
-    "description": "Comprehensive Epsimo AI platform SDK and CLI for managing agents, projects, threads, Virtual Database, and frontend design. Build AI apps with persistent state, streaming conversations, and React UI kit.",
+    "description": "AI Agent Skill - Build production-ready AI applications with multi-agent orchestration, Virtual Database, streaming conversations, and React UI Kit. For Claude Code, Cursor, Windsurf, and 30+ AI coding agents.",
     "main": "SKILL.md",
     "bin": {
         "epsimo": "./epsimo/cli.py"
