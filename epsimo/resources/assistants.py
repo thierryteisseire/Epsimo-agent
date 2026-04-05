@@ -67,17 +67,15 @@ class Assistants:
                         final_tools.append(normalized_tool)
         configurable = {
             "type": "agent",
-            "agent_type": "agent"
+            "type==agent/agent_type": "agent",
+            "type==agent/system_message": instructions,
+            "type==agent/tools": final_tools
         }
         
         return {
             "name": name,
             "config": {
-                "configurable": configurable,
-                "instructions": instructions, 
-                "model": model, 
-                "metadata": {},
-                "tools": final_tools
+                "configurable": configurable
             },
             "metadata": {}, 
             "tags": [],
