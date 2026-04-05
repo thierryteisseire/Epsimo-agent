@@ -10,7 +10,7 @@ from pathlib import Path
 
 # Configuration
 API_BASE_URL = os.environ.get("EPSIMO_API_URL", "https://api.epsimoagents.com")
-TOKEN_FILE = Path.home() / "code/epsimo-frontend/.epsimo_token" # Keeping the same path for compatibility for now
+TOKEN_FILE = Path.home() / ".epsimo_token"
 
 def get_token():
     """Retrieve a valid JWT token, refreshing if necessary."""
@@ -123,9 +123,7 @@ def perform_login(email, password, attempt_signup_on_fail=False):
             raise ValueError("Failed to obtain access token from login response.")
 
         # Save token
-        # Create dir if not exists?
-        # TOKEN_FILE.parent.mkdir(parents=True, exist_ok=True) 
-        # For now assume path exists as per user setup
+        TOKEN_FILE.parent.mkdir(parents=True, exist_ok=True)
         
         with open(TOKEN_FILE, 'w') as f:
             json.dump(data, f)

@@ -1,5 +1,6 @@
 import os
 import requests
+from .auth import get_token
 from .resources.projects import Projects
 from .resources.assistants import Assistants
 from .resources.threads import Threads
@@ -9,7 +10,7 @@ from .resources.db import Database
 
 class EpsimoClient:
     def __init__(self, api_key=None, base_url=None):
-        self.api_key = api_key or os.environ.get("EPSIMO_API_KEY")
+        self.api_key = api_key or os.environ.get("EPSIMO_API_KEY") or get_token()
         self.base_url = base_url or os.environ.get("EPSIMO_API_URL", "https://api.epsimoagents.com")
         
         # In the future, we might support API Keys directly.

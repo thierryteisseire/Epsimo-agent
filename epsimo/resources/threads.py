@@ -38,6 +38,11 @@ class Threads:
         }
         return self.client.request("POST", f"/threads/{thread_id}/state", json=payload, headers=headers)
 
+    def delete(self, project_id, thread_id):
+        """Delete a thread."""
+        headers = self.client.get_project_headers(project_id)
+        return self.client.request("DELETE", f"/threads/{thread_id}", headers=headers)
+
     # --- Runs (Streaming) ---
     # Putting this here for convenience as Runs are usually per-thread/assistant
     

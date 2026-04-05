@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import argparse
 import sys
 import os
@@ -83,9 +84,12 @@ def cmd_buy(args):
 def cmd_auth(args):
     """Handle authentication."""
     print("🔐 Authenticating Epsimo CLI...")
+    
+    # Check if we should skip login if already valid
     token = get_token()
-    if token:
-        print("ℹ️  Already logged in. Re-authenticating...")
+    if token and not args.force:
+        print("✅ Already logged in. Use 'epsimo auth --force' to re-authenticate.")
+        return
     
     try:
         login_interactive()
@@ -285,17 +289,15 @@ def cmd_deploy(args):
             if name in asst_map:
                 asst_id = asst_map[name]["assistant_id"]
                 print(f"🔄 Updating assistant: {name} ({asst_id})...")
-                client.assistants.update(project_id, asst_id, {
-                    "name": name,
-                    "config": {
-                        "configurable": {
-                            "type": "agent",
-                            "type==agent/model": model,
-                            "type==agent/system_message": instructions,
-                            "type==agent/tools": tools
-                        }
-                    }
-                })
+                # Prepare payload using the same logic as create
+                payload = client.assistants._prepare_payload(
+                    name=name,
+                    model=model,
+                    instructions=instructions,
+                    tools=tools,
+                    public=asst_map[name].get("public", False)
+                )
+                client.assistants.update(project_id, asst_id, payload)
             else:
                 print(f"✨ Creating assistant: {name}...")
                 client.assistants.create(
@@ -477,6 +479,7 @@ def cmd_run(args):
                 message=user_input
             )
             
+            last_printed_len = 0
             for chunk in stream:
                  # Handle both list and dict chunks as discovered in testing
                 content = None
@@ -488,9 +491,12 @@ def cmd_run(args):
                 elif isinstance(chunk, dict) and "content" in chunk:
                     content = chunk["content"]
                 
-                if content:
-                    sys.stdout.write(content)
-                    sys.stdout.flush()
+                if content and isinstance(content, str):
+                    new_text = content[last_printed_len:]
+                    if new_text:
+                        sys.stdout.write(new_text)
+                        sys.stdout.flush()
+                        last_printed_len = len(content)
             print("\n")
             
         except KeyboardInterrupt:
@@ -519,6 +525,7 @@ def main():
 
     # epsimo auth
     auth_parser = subparsers.add_parser("auth", help="Login to Epsimo")
+    auth_parser.add_argument("--force", action="store_true", help="Force re-authentication")
     auth_parser.set_defaults(func=cmd_auth)
 
     # epsimo whoami

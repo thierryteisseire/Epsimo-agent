@@ -11,7 +11,7 @@ from pathlib import Path
 
 # Configuration
 API_BASE_URL = os.environ.get("EPSIMO_API_URL", "https://api.epsimoagents.com")
-TOKEN_FILE = Path("/Users/thierry/code/epsimo-frontend/.epsimo_token")
+TOKEN_FILE = Path.home() / ".epsimo_token"
 
 def get_token():
     """Retrieve a valid JWT token, refreshing if necessary."""
