@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useCallback } from "react";
 import { ThreadChat } from "@/components/epsimo";
+import DatabasePanel from "@/components/epsimo/DatabasePanel/DatabasePanel";
 import styles from "./page.module.css";
 
 export default function Home() {
-  const [appState, setAppState] = useState<any>(null);
+  const [threadId, setThreadId] = useState<string | null>(null);
+  const [dbRefreshKey, setDbRefreshKey] = useState(0);
 
-  // Example: Listening for changes in the Virtual Database
-  // In a real app, you would fetch this on a timer or after a message
-  useEffect(() => {
-    console.log("Tip: Use client.db.get_all() from the SDK to read structured thread state!");
+  const handleResponseComplete = useCallback(() => {
+    setDbRefreshKey(k => k + 1);
   }, []);
 
   return (
@@ -25,16 +25,14 @@ export default function Home() {
 
       <div className={styles.content}>
         <aside className={styles.sidebar}>
-          <h3>Project Memory</h3>
-          <p className={styles.hint}>Structured data written by the agent will appear here.</p>
-          <div className={styles.dbPreview}>
-            {appState ? JSON.stringify(appState, null, 2) : "DB Empty..."}
-          </div>
+          <DatabasePanel threadId={threadId} refreshKey={dbRefreshKey} />
         </aside>
 
         <section className={styles.chatSection}>
-          <ThreadChat 
+          <ThreadChat
             assistantId="{{ASSISTANT_ID}}"
+            onThreadCreated={setThreadId}
+            onResponseComplete={handleResponseComplete}
           />
         </section>
       </div>

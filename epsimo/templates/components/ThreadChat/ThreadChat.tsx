@@ -27,9 +27,10 @@ interface ThreadChatProps {
     onBack?: () => void;
     className?: string;
     showHeader?: boolean;
+    onResponseComplete?: () => void;
 }
 
-export default function ThreadChat({ threadId, onBack, className, showHeader = true }: ThreadChatProps) {
+export default function ThreadChat({ threadId, onBack, className, showHeader = true, onResponseComplete }: ThreadChatProps) {
     const router = useRouter();
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputValue, setInputValue] = useState('');
@@ -591,6 +592,7 @@ export default function ThreadChat({ threadId, onBack, className, showHeader = t
             setIsSending(false);
             setCurrentTool(null);
             isProcessingRef.current = false;
+            onResponseComplete?.();
         }
     };
 
