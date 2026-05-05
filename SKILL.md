@@ -6,9 +6,9 @@ description: Comprehensive Epsimo AI platform SDK and CLI for managing agents, p
 # Epsimo Agent Framework
 
 > [!NOTE]
-> This is a **Beta Release** (v0.2.1). Features and APIs may evolve based on feedback.
+> This is a **Beta Release** (v0.3.0). Features and APIs may evolve based on feedback.
 
-The Epsimo Agent Framework allows you to build sophisticated AI-powered applications with agents, persistent threads, and a "Virtual Database" state layer. It provides a unified **CLI**, a **Python SDK**, and a **React UI Kit**.
+The Epsimo Agent Framework allows you to build sophisticated AI-powered applications with agents, persistent threads, and a "Virtual Database" state layer. It provides a unified **CLI** (with TUI dashboard and smart commands), a **Python SDK**, and a **React UI Kit**.
 
 **Base URL:** `https://api.epsimoagents.com`  
 **Frontend URL:** `https://app.epsimoagents.com`
@@ -38,25 +38,33 @@ Your AI app is now live with persistent conversations, Virtual Database state, a
 
 ## 📦 Installation
 
-### CLI & Python SDK
+### One-Line Install (Recommended)
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+# macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/thierryteisseire/epsimo-agent/main/install.sh | bash
 
-# Make CLI executable (if using from source)
-chmod +x epsimo/cli.py
-export PATH="$PATH:$(pwd)/epsimo"
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/thierryteisseire/epsimo-agent/main/install.ps1 | iex
+```
 
-# Or via npm (for Claude Code skills)
+### Via npm
+
+```bash
 npm install -g epsimo-agent
+```
+
+### From Source (Python)
+
+```bash
+pip install -r requirements.txt
+pip install -e .
 ```
 
 **Dependencies:**
 - `requests>=2.28.0`
 - `pyyaml>=6.0`
-- `click>=8.0.0`
-- `python-dotenv>=0.19.0`
+- Python 3.8+
 
 ---
 
@@ -212,6 +220,96 @@ https://checkout.stripe.com/session_...
 | `epsimo assistants --project-id <P_ID>` | List all assistants in a project |
 | `epsimo assistants --project-id <P_ID> --json` | List assistants in JSON format |
 | `epsimo threads --project-id <P_ID>` | List all threads in a project |
+
+### Smart CLI Commands
+
+Interactive commands with real-time tool call visibility and auto-detection of project/assistant.
+
+| Command | Description |
+|---------|-------------|
+| `epsimo chat` | Interactive chat with tool call visibility |
+| `epsimo chat --tools search_tavily,ddg_search` | Chat with specific tools enabled |
+| `epsimo exec "print('hello')"` | Execute code via backend assistant |
+| `epsimo exec --file script.py` | Execute a code file |
+| `epsimo search "latest AI news"` | Web search through backend assistant |
+| `epsimo search "query" --tool ddg_search` | Search with specific provider |
+| `epsimo tools` | List all available backend tools |
+| `epsimo tools --json` | List tools as JSON |
+| `epsimo tools health ddg_search` | Check health of a specific tool |
+
+**Example:**
+```bash
+$ epsimo chat
+📌 Using project: My AI App
+📌 Using assistant: Support Agent
+💬 Chat ready (project=proj_abc1… assistant=asst_xyz7…)
+Type /exit to quit, /tools to list tools.
+
+You > What's the weather in Paris?
+⠹ Calling custom_get_weather...
+✅ custom_get_weather done
+   📎 {"temp": 18, "condition": "sunny"}
+Bot > The weather in Paris is currently sunny with a temperature of 18°C.
+```
+
+### Interactive Run (Auto-Select)
+
+| Command | Description |
+|---------|-------------|
+| `epsimo run` | Auto-select project and assistant interactively |
+| `epsimo run --project-id <P_ID>` | Pick assistant interactively |
+| `epsimo run --project-id <P_ID> --assistant-id <A_ID>` | Direct run |
+
+### TUI Dashboard
+
+A full terminal dashboard for managing your Epsimo platform.
+
+```bash
+epsimo tui
+```
+
+**Features:**
+- 📊 Account status and thread usage
+- 📁 Project browser and switcher
+- 🤖 Assistant management with guided creation wizard
+- 🧵 Thread listing and Virtual DB inspection
+- 🔧 Tool listing and health checks
+- 💬 Inline chat with slash commands
+- 🛒 Thread purchase flow
+
+**Navigation:**
+- Number keys `[1-9]` to select menu items
+- `q` to quit or go back
+
+**Slash Commands (in TUI chat):**
+
+| Command | Description |
+|---------|-------------|
+| `/help` | Show all commands |
+| `/status` | Account info |
+| `/credits` | Thread balance |
+| `/db` | View Virtual DB for current thread |
+| `/db set <key> <value>` | Set a DB key |
+| `/tools` | List available tools |
+| `/threads` | List threads |
+| `/assistants` | List assistants |
+| `/switch` | Switch to a different assistant |
+| `/create` | Create a new assistant (guided wizard) |
+| `/buy` | Purchase more threads |
+| `/clear` | Clear screen |
+| `/info` | Current session info |
+
+### DatabasePanel (React Component)
+
+A new React component for displaying Virtual Database state in real-time:
+
+```tsx
+import DatabasePanel from "@/components/epsimo/DatabasePanel/DatabasePanel";
+
+<DatabasePanel threadId={threadId} refreshKey={dbRefreshKey} />
+```
+
+Auto-refreshes after each assistant response when used with `onResponseComplete` callback.
 
 ---
 
@@ -799,13 +897,17 @@ Epsimo Platform
 
 Client Tools
 ├── CLI (epsimo command)
+│   ├── Core: auth, init, deploy, create, projects, assistants, threads, db, credits
+│   ├── Smart: chat, exec, search, tools (auto-detect project/assistant)
+│   └── TUI: interactive terminal dashboard with slash commands
 ├── Python SDK (EpsimoClient)
-└── React UI Kit (ThreadChat, useChat)
+├── React UI Kit (ThreadChat, DatabasePanel)
+└── Cross-Platform Installers (install.sh, install.ps1)
 ```
 
 ---
 
-**Version:** 0.2.0  
+**Version:** 0.3.0  
 **License:** MIT  
 **Author:** Thierry Teisseire
 
